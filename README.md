@@ -20,6 +20,14 @@ Each bot runs one `curl` on its own box whenever its status changes and sends a 
 2. The bot replies with two links. Open the dashboard in a browser: `https://bodila51.github.io/grokbot-wallpaper/#<topic>`.
 3. For the wallpaper, use the second link as a web wallpaper in Lively (Windows, `lively/README.md`) or the Mac app (`mac/README.md`): `https://bodila51.github.io/grokbot-wallpaper/face/#<topic>`.
 
+### Kyoto dusk
+
+The plain office is what you get with no theme. 京都暮色 is `?theme=kyoto-dusk` in the query; the topic stays after `#`. On this site:
+
+`https://uiskys.github.io/grokbot-wallpaper/office/?theme=kyoto-dusk#<topic>`
+
+Wallpaper mode uses the same query: `?mode=wallpaper&theme=kyoto-dusk`. `?theme=office` forces the plain office. Details: [`docs/THEMES.md`](docs/THEMES.md).
+
 ### The line formats
 
 One JSON object per POST, at most 4 KB.

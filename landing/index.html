@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <script>
-// A dashboard link, …/grokbot-wallpaper/#gbw-… (maybe with &ntfy=… after it), opens the 3D office. The hash never
-// leaves the browser, so the topic is not sent to any server.
-function toOffice() { if (/^#gbw-[\w-]+(&|$)/.test(location.hash)) location.replace('office/' + location.hash); }
+// A dashboard link, …/grokbot-wallpaper/#gbw-… (maybe with &ntfy=… after it), opens the 3D office in Kyoto dusk.
+// The hash never leaves the browser, so the topic is not sent to any server. The theme stays in the query.
+function toOffice() { if (/^#gbw-[\w-]+(&|$)/.test(location.hash)) location.replace('office/?theme=kyoto-dusk' + location.hash); }
 toOffice();
 addEventListener('hashchange', toOffice);                  // the link pasted into a tab that already shows this page
 </script>
@@ -466,7 +466,7 @@ footer .links { display: flex; flex-wrap: wrap; gap: 6px 24px; }
 
 <footer class="quiet">
   <span>Grok Bot Wallpaper</span>
-  <span class="links"><a href="face/">Open the wallpaper on its own</a><a href="office/">Grok Bot Dashboard</a><a href="https://donate.stripe.com/dRmaEZ3CA17W21Tg9AeAg0r" target="_blank" rel="noopener">Donate</a></span>
+  <span class="links"><a href="face/">Open the wallpaper on its own</a><a href="office/?theme=kyoto-dusk">Grok Bot Dashboard</a><a href="https://donate.stripe.com/dRmaEZ3CA17W21Tg9AeAg0r" target="_blank" rel="noopener">Donate</a></span>
 </footer>
 
 <script>

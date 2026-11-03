@@ -46,3 +46,9 @@ Then send each of my other bots the message "status check, reply with one short 
 
 11. Reply with LINK first, and one sentence saying it works like a password, so I should not share it. Then the status check: how many bots posted their line, and the names of the bots that did not (their instructions need a look). Then one line on what to do with the link: open it in a browser for the 3D dashboard; for the wallpaper, paste it on Windows into Lively Wallpaper (Customise, then Your bots channel) or on a Mac into the Grok Bot Wallpaper app (the eyes icon in the menu bar, then Bots channel). Then, only if something did not work, add a short list of the problems. Reply in the language I usually write to you in. Do not post any other secret to the channel or in your reply.
 ```
+
+Kyoto dusk on this fork: keep the same topic after `#`, and put the theme in the query.
+
+`https://uiskys.github.io/grokbot-wallpaper/office/?theme=kyoto-dusk#<topic>`
+
+Leave `?theme=` off, or set `?theme=office`, for the plain office.

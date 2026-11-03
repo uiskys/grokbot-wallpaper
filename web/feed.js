@@ -14,12 +14,13 @@
 //   {"looks":{"Bot A":{"shape":"sphere","color":"#RRGGBB","accessory":"none"}}} how each bot's blob looks
 //   {"type":"usage","total_used_pct":37,"resets_at":"…","bots":{"Bot A":4.1}}  the weekly limit meter
 //   {"groups":{"Bot A":"Content"}}                                            teams, one floor each
+//   {"floor_themes":{"Kyoto":"office"}}                                       optional interior override (web/theme/)
 //   {"chat":{"Bot A":"grokbot://app/v1/agent?id=…"}}                         each bot's chat, for «Open chat»
 //   {"routines":{"bot":"Bot A","items":[{"name":"…","schedule":"…","next_run":"ISO"}]}}   a bot's routines
 //   {"check":{"bots":["Bot A","Bot B"]}}                                     the setup bot starts a status check
 // On top of the server's state the office gets state.finished (done lines of the last 24 h, newest first),
-// state.routines (every bot's routines, soonest first) and state.check (the latest status check: who has answered), for
-// the «Finished», «Routines» and «Status check» panels.
+// state.routines (every bot's routines, soonest first), state.check (the latest status check: who has answered), and
+// state.floor_themes (optional interior ids). The first three feed the «Finished», «Routines» and «Status check» panels.
 import { StateStore, botIdFor } from './lib/state.js';
 import { FEED_BASE, feedFromLink } from './lib/feedbase.js';
 
@@ -48,6 +49,7 @@ export async function connectFeed({ topic, servers }, onState) {
   const store = new StateStore({ tz, quietIdleMs: QUIET_MS, hasAvatar: (id) => HANDMADE.has(id) });   // no GLB probe: every bot is generated from its look
   const cfg = {};                                        // per bot name: { look, chat_url } -> the store's bots config
   const routines = new Map();                            // bot id -> { name, items }
+  const floorThemes = {};                                // floor name -> interior id; later lines merge
   let check = null;                                      // the latest status check: { ms, names }
   let lines = [], saveTimer = 0;
   const seen = new Set();
@@ -142,6 +144,15 @@ export async function connectFeed({ topic, servers }, onState) {
       store.setBotsConfig(cfg);
       return true;
     }
+    if (isMap(rec.floor_themes)) {
+      for (const [name, id] of Object.entries(rec.floor_themes).slice(0, 40)) {
+        if (typeof name !== 'string' || !name.trim()) continue;
+        const keyName = name.trim().slice(0, 40);
+        if (typeof id !== 'string' || !id.trim() || /^(auto)$/i.test(id.trim())) delete floorThemes[keyName];
+        else floorThemes[keyName] = id.trim().toLowerCase().slice(0, 24);
+      }
+      return true;
+    }
     if (isMap(rec.groups)) {                             // {"groups":{"Bot A":"Content"}}: the main bot's teams = floors
       for (const [name, team] of Object.entries(rec.groups).slice(0, 400)) {
         if (typeof team === 'string' && team.trim()) (cfg[name] ||= {}).floor = team.trim().slice(0, 40);
@@ -188,6 +199,7 @@ export async function connectFeed({ topic, servers }, onState) {
       if (rec?.status !== 'done' || typeof rec.bot !== 'string') continue;
       finished.push({ t: typeof rec.t === 'string' ? rec.t : new Date(l.time * 1000).toISOString(), bot: botIdFor(rec.bot), name: rec.bot.slice(0, 80), step: String(rec.step ?? '').slice(0, 80) });
     }
+    s.floor_themes = { ...floorThemes };
     s.finished = finished;
     s.routines = [...routines].flatMap(([bot, { name, items }]) => items.map((r) => ({ bot, name, ...r })))
       .sort((a, b) => (a.next_run ? Date.parse(a.next_run) : Infinity) - (b.next_run ? Date.parse(b.next_run) : Infinity));

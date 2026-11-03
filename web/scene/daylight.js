@@ -71,6 +71,9 @@ const NIGHT = P({                                         // dim warm room, lamp
   glassC: rgb('#1A2A66'), glassA: 0.92, glassE: 0.5,
 });
 
+// A theme's lightPhase names one of these. setLook copies it, then overlays the theme's own fields.
+const PHASE_LOOK = { day: DAY, morning: MORNING, golden: GOLDEN, dawn: DAWN, dusk: DUSK, night: NIGHT };
+
 function mixParams(a, b, t) {
   const out = {};
   for (const k in a) {
@@ -194,6 +197,8 @@ export function createDaylight({ scene, renderer }) {
   const state = { night: 0, lampsK: 0, windowsK: 0, phase: 'day', minutes: 720, el: 45, az: 0, params: null };
   let override = null;                            // minutes (?time= / setTime), or null = the live clock
   const real = params.get('real') === '1';        // ?time=..&real=1: today's real sun at that time
+  let themeLook = null;                          // a theme's fixed light; ignored while ?time= is set
+  let themePhase = null;
   let building = null;
   let cur = null;
   let target = null;
@@ -215,7 +220,36 @@ export function createDaylight({ scene, renderer }) {
     lastPlan = lastHtml = -1e9;
   }
 
+  // Fixed light for a theme. The theme lists only the fields it changes (hex strings or the arrays lightAt
+  // returns). They overlay the lightPhase preset, because apply() also reads bake, tint, glass and floor-sun.
+  // ?time= still drives the clock.
+  function setLook(look, opts = {}) {
+    if (!look) { themeLook = null; themePhase = null; }
+    else {
+      const phase = opts.phase || 'golden';
+      themePhase = phase;
+      const base = PHASE_LOOK[phase] || GOLDEN;
+      const p = {};
+      for (const k of Object.keys(base)) p[k] = Array.isArray(base[k]) ? base[k].slice() : base[k];
+      // Presets have no sun angles (lightAt adds those). A low sun still lights the tower if a theme omits them.
+      p.sunEl = 16;
+      p.sunAz = 250;
+      for (const k of Object.keys(look)) {
+        const v = look[k];
+        p[k] = typeof v === 'string' ? rgb(v) : (Array.isArray(v) ? v.slice() : v);
+      }
+      themeLook = p;
+    }
+    cur = null;
+    lastPlan = lastHtml = -1e9;
+  }
+
   function plan() {
+    if (themeLook && override === null) {
+      target = themeLook;
+      state.phase = themePhase || 'day';
+      return;
+    }
     const d = new Date();
     if (override !== null && !real) [state.el, state.az] = refPosition(override);
     else {
@@ -345,7 +379,7 @@ export function createDaylight({ scene, renderer }) {
   }
 
   const api = {
-    uNight, state, update, setTime,
+    uNight, state, update, setTime, setLook,
     track(mat, kind) { tracked.set(mat, kind); },
     untrack(mat) { tracked.delete(mat); },
     setLampSource(fn) { lampSource = fn; },

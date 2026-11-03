@@ -1,0 +1,75 @@
+/* Kyoto Dusk accents. Status hues stay recognisable; cards shift to frosted lilac glass.
+   These win over :root / .bhq-surface because of the data-theme attribute. The office sets neither. */
+
+html[data-theme="kyoto-dusk"] {
+  --bg-0: #FFD4A8;
+  --bg-1: #C9A0D8;
+  --bg-2: #5A4A88;
+  --ink: #2A2438;
+  --muted: #6A6080;
+  /* Chrome stays Nunito: Mincho is only for the Theme control. */
+  --font: "Nunito", "Shippori Mincho", "Hiragino Mincho ProN", "Songti SC", serif;
+  --working: #3E9A6A;
+  --waiting: #E8A838;
+  --error: #E24B5C;
+  --stuck: #E07A3A;
+  --done: #6A8AD6;
+  --idle: #9A90A8;
+}
+
+html[data-theme="kyoto-dusk"] .bhq-surface {
+  --base: #2E2840;
+  --glow: #E8B888;
+  --hi: #F4ECF8;
+  --mid: #D4C4E8;
+  --dim: #A898C0;
+  background:
+    linear-gradient(180deg, rgba(255, 212, 168, .10), transparent 42%, rgba(40, 28, 72, .32)),
+    var(--base);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 220, .28),
+    inset 0 0 0 1px rgba(160, 140, 200, .35),
+    0 8px 24px rgba(40, 28, 72, .36);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+html[data-theme="kyoto-dusk"] .bhq-surface[data-s="working"] {
+  --base: #1E3A30; --glow: #7ADE9A; --hi: #E8F8EC; --mid: #B8E0C4; --dim: #88C0A0;
+}
+html[data-theme="kyoto-dusk"] .bhq-surface[data-s="waiting_user"],
+html[data-theme="kyoto-dusk"] .bhq-surface[data-s="stuck"] {
+  --base: #4A3020; --glow: #FFC56A; --hi: #FFF0D8; --mid: #F0D4A0; --dim: #D8B878;
+}
+html[data-theme="kyoto-dusk"] .bhq-surface[data-s="error"] {
+  --base: #5A2030; --glow: #FF7A88; --hi: #FFE4E8; --mid: #F0B0B8; --dim: #D88898;
+}
+html[data-theme="kyoto-dusk"] .bhq-surface[data-s="done"] {
+  --base: #243050; --glow: #9AB4FF; --hi: #E8EEFF; --mid: #C0CCF0; --dim: #98A8D8;
+}
+
+html[data-theme="kyoto-dusk"] .bhq-theme {
+  font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Songti SC", serif;
+  font-weight: 700;
+}
+
+html[data-theme="kyoto-dusk"] .bhq-cta:not(:disabled) {
+  background: #FFD4A8;
+  color: #3A3048;
+  box-shadow: inset 0 1px 0 #FFF6E8, 0 4px 14px rgba(40, 28, 72, .35);
+}
+html[data-theme="kyoto-dusk"] .bhq-floor[aria-current="true"] .bhq-fnum {
+  background: #FFD4A8;
+  color: #3A3048;
+}
+html[data-theme="kyoto-dusk"] .bhq-theme:focus-within,
+html[data-theme="kyoto-dusk"] :where(#topbar, #floors, #panel, #feed, .bhq-zoom, .bhq-dock, .bhq-sheet) :focus-visible {
+  outline-color: #E8B888;
+}
+
+html.bhq-phone[data-theme="kyoto-dusk"] .bhq-floor:not([aria-current="true"]) {
+  background: linear-gradient(180deg, rgba(255, 212, 168, .07), transparent 45%, rgba(0, 0, 0, .22)), #2E2840;
+}
+html.bhq-phone[data-theme="kyoto-dusk"] .bhq-floor[aria-current="true"] {
+  background: linear-gradient(180deg, rgba(255, 212, 168, .14), rgba(201, 160, 216, .08)), #3A3450;
+}
