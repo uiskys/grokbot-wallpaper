@@ -71,6 +71,9 @@ const NIGHT = P({                                         // dim warm room, lamp
   glassC: rgb('#1A2A66'), glassA: 0.92, glassE: 0.5,
 });
 
+// A theme's lightPhase names one of these. setLook copies it, then overlays the theme's own fields.
+const PHASE_LOOK = { day: DAY, morning: MORNING, golden: GOLDEN, dawn: DAWN, dusk: DUSK, night: NIGHT };
+
 function mixParams(a, b, t) {
   const out = {};
   for (const k in a) {
@@ -217,14 +220,25 @@ export function createDaylight({ scene, renderer }) {
     lastPlan = lastHtml = -1e9;
   }
 
-  // Fixed light for a theme (hex strings or the same arrays lightAt returns). ?time= still drives the clock.
+  // Fixed light for a theme. The theme lists only the fields it changes (hex strings or the arrays lightAt
+  // returns). They overlay the lightPhase preset, because apply() also reads bake, tint, glass and floor-sun.
+  // ?time= still drives the clock.
   function setLook(look, opts = {}) {
     if (!look) { themeLook = null; themePhase = null; }
     else {
+      const phase = opts.phase || 'golden';
+      themePhase = phase;
+      const base = PHASE_LOOK[phase] || GOLDEN;
       const p = {};
-      for (const k of Object.keys(look)) p[k] = typeof look[k] === 'string' ? rgb(look[k]) : look[k];
+      for (const k of Object.keys(base)) p[k] = Array.isArray(base[k]) ? base[k].slice() : base[k];
+      // Presets have no sun angles (lightAt adds those). A low sun still lights the tower if a theme omits them.
+      p.sunEl = 16;
+      p.sunAz = 250;
+      for (const k of Object.keys(look)) {
+        const v = look[k];
+        p[k] = typeof v === 'string' ? rgb(v) : (Array.isArray(v) ? v.slice() : v);
+      }
       themeLook = p;
-      themePhase = opts.phase || null;
     }
     cur = null;
     lastPlan = lastHtml = -1e9;

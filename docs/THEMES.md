@@ -45,7 +45,7 @@ https://<you>.github.io/<repo>/web/?mode=wallpaper&theme=ranch#<topic>
 
 Every field is optional. Hooks that are absent are not called.
 
-`sky` is applied in `bootTheme`, before the studio pass is built. `light` is handed to `daylight.setLook`. With no theme, the pass keeps the `STUDIO` backdrop and the light stays noon.
+`sky` is applied in `bootTheme`, before the studio pass is built. `light` is handed to `daylight.setLook`, which fills any field the theme leaves out (`bake`, `tint`, glass, the sun on the baked floor) from the `lightPhase` preset. With no theme, the pass keeps the `STUDIO` backdrop and the light stays noon.
 
 `mount` should put props on **layer 1** and enable layer 1 on existing lights (leave layer 0 on). The camera is shown layer 1 only when `mount` exists. The aura silhouette is rendered with the camera masked to layer 0, so ranch props do not become one giant shadow. Do not add a ground plane large enough to cover the whole orthographic frame if the sunset backdrop should remain visible.
 
